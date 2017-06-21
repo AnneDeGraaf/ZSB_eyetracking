@@ -3,7 +3,6 @@ A = rgb2gray(Image);
 
 imshow(A)
 
-
 %Find all the circles with radius r pixels in the range [15, 30].
 
 [centers, radii, metric] = imfindcircles(A,[60 100], 'Sensitivity', 0.99, 'Method', 'TwoStage', 'ObjectPolarity', 'dark');
