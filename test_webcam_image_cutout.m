@@ -1,8 +1,8 @@
 % initialize webcam
-% cam = webcam;
+% % cam = webcam;
 
 % make a snapshot
-anne1 = snapshot(cam);
+anne1 = snapshot(webcam(1));
 figure('name', 'anne1');
 imshow(anne1);
 
