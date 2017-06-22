@@ -7,9 +7,12 @@ BW2 = edge(croppedImage,'canny');
 figure('name', 'BW2');
 
 
+<<<<<<< HEAD
+=======
 %imshow(croppedImage);
 imshow(BW2);
 
+>>>>>>> 2145ea5073e233c4cd4e3629acde473299131a6c
 %Find all the circles with radius r pixels in the range [15, 30].
 
 [centers, radii, metric] = imfindcircles(croppedImage,[6 12], 'Sensitivity', 0.99, 'Method', 'TwoStage', 'ObjectPolarity', 'dark');

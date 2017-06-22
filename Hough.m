@@ -1,4 +1,4 @@
-% by Anne de Graaf and Emmeke Veltmeijer
+% by Anne de Graaf and Dennis Holkema
 
 function h = Hough(im, thresh , nrho , ntheta)
 edged = edge(im, 'canny', thresh);
