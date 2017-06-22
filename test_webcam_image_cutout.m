@@ -1,5 +1,5 @@
 % initialize webcam
-cam = webcam;
+% cam = webcam;
 
 % make a snapshot
 anne1 = snapshot(cam);
@@ -24,5 +24,5 @@ bestRadii = radii(1:numCirclesDrawn);
 bestMetric = metric(1:numCirclesDrawn);
 
 %Draw the numCirclesDrawn strongest circle perimeters over the original image.
-viscircles(centersStrong, radiiStrong,'EdgeColor','b');
+viscircles(bestCenters, bestRadii,'EdgeColor','b');
 
