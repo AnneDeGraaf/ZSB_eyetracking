@@ -8,4 +8,4 @@ imshow(anne);
 
 backgroundSubtracted = anne - background;
 figure('name', 'background subtracted');
-imshow(backgroundSubtracted);
+imshow(backgroundSubtracted, []);
