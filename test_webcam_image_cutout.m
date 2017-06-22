@@ -1,9 +1,13 @@
 % initialize webcam
-% cam = webcam;
+% % cam = webcam;
 
 % make a snapshot
+<<<<<<< HEAD
 anne1 = step(imaq.VideoDevice('winvideo', 2));
 
+=======
+anne1 = snapshot(webcam(1));
+>>>>>>> master
 figure('name', 'anne1');
 %imshow(anne1);
 
