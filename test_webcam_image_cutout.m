@@ -6,7 +6,7 @@
 anne1 = step(imaq.VideoDevice('winvideo', 2));
 
 
-anne1 = snapshot(webcam(1));
+%anne1 = snapshot(webcam(1));
 
 figure('name', 'anne1');
 %imshow(anne1);
