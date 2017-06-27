@@ -1,0 +1,16 @@
+% % cam = webcam(1);
+% % neutral = snapshot(cam);
+% % left = snapshot(cam);
+% % right = snapshot(cam);
+% % up = snapshot(cam);
+% % down = snapshot(cam);
+figure('name' , 'neutral' );
+imshow(neutral);
+figure('name' , 'left' );
+imshow(left);
+figure('name' , 'right' );
+imshow(right);
+figure('name' , 'up' );
+imshow(up);
+figure('name' , 'down' );
+imshow(down);

@@ -4,17 +4,18 @@ function yIris = test_complete_script(gameover, webcam_name)
     if gameover == 0
 
         % make a snapshot and cut out the face area
-        % % snapFace = rgb2gray(imread('5b.jpg'));
-        snap = snapshot(webcam_name);
-        snapFace = snap(75:335, 205:435);
-% %         figure('name', 'snapshot');
-% %         imshow(snapFace, 'InitialMagnification','fit');
-% %         hold on;
+        direction = 'down';
+        snapFace = rgb2gray(imread('calib/down.jpg'));
+% %         snap = snapshot(webcam_name);
+% %         snapFace = snap(75:335, 205:435);
+        figure('name', 'snapshot');
+        imshow(snapFace, 'InitialMagnification','fit');
+        hold on;
 
         % change variables here
-        irisRadiusRange = [3 12];
+        irisRadiusRange = [5 9];
         irisCircles = 1;
-        refPointsRadiusRange = [12 20];
+        refPointsRadiusRange = [8 11];
         refPointsCircles = 2;
 
         % find circles with radius in radiusRange
@@ -32,9 +33,9 @@ function yIris = test_complete_script(gameover, webcam_name)
         % % refPointsBestMetric = refPointsMetric(1:refPointsCircles);
 
         %Draw the numCirclesDrawn strongest circle perimeters over the snapFace image.
-% %         viscircles(irisBestCenters, irisBestRadii,'EdgeColor','b');
-% %         viscircles(refPointsBestCenters, refPointsBestRadii,'EdgeColor','r');
-% %         hold on;
+        viscircles(irisBestCenters, irisBestRadii,'EdgeColor','b');
+        viscircles(refPointsBestCenters, refPointsBestRadii,'EdgeColor','r');
+        hold on;
 
         %Find the y-position of the iris, relative to the two reference points
         %By defining a new coordinate frame with origin in the highest reference
@@ -55,9 +56,10 @@ function yIris = test_complete_script(gameover, webcam_name)
         y1 = [highRefPoint(2), lowRefPoint(2)];
         x2 = [highRefPoint(1), irisCenter(1)];
         y2 = [highRefPoint(2), irisCenter(2)];
-% %         plot(x1, y1, 'color', 'red');
-% %         plot(x2, y2, 'color', 'blue');
-% %         viscircles(highRefPoint, yIris,'EdgeColor','g');
+        plot(x1, y1, 'color', 'red');
+        plot(x2, y2, 'color', 'blue');
+        
+        title(direction);
     else
         yIris = sprinf('game over');
     end 
