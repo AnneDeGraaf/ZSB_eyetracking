@@ -1,4 +1,4 @@
-vidobj = imaq.VideoDevice('winvideo', 2);
+vidobj = imaq.VideoDevice('winvideo', 1);
 I = step(vidobj);
 A = rgb2gray(I);
 clear('vidobj');
@@ -29,7 +29,7 @@ boxes = cat(1, s.BoundingBox);
 
 [M,Index] = max(boxes);
 
-row_index = int8(;
+row_index = int8(Index(4));
 eye_box_x = ceil(boxes(row_index,1)) -20;
 eye_box_y = ceil(boxes(row_index,2)) -20;
 eye_box_dx = ceil(boxes(row_index,3)) +20;
@@ -40,9 +40,9 @@ eye_box_new_y = eye_box_y + eye_box_dy;
 
 croppedImage = I(eye_box_y:eye_box_x, eye_box_new_y:eye_box_new_x);
 
-imshow(croppedImage)
-hold on
-plot(boxes(:,1),boxes(:,2), 'b*')
-hold off
+imshow(croppedImage);
+hold on;
+plot(boxes(:,1),boxes(:,2), 'b*');
+hold off;
 
 
