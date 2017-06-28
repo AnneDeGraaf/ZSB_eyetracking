@@ -93,27 +93,19 @@ function gaze = gaze_tracking(movementAxis, gameover, webcamName)
                 upperRefPoint2 = refPointsPair2(yUpperIndex2, :);
                 lowerRefPoint2 = refPointsPair2(yLowerIndex2, :);
                 
-                % calculate the gaze for each eye 
+                % calculate the gaze 
                 gaze1 = dot((irisCenter1 - upperRefPoint1), (lowerRefPoint1 - upperRefPoint1))/...
-                    sqrt(sum((lowerRefPoint1 - upperRefPoint1).^2)); 
+                    sum((lowerRefPoint1 - upperRefPoint1).^2); 
                 gaze2 = dot((irisCenter2 - upperRefPoint2), (lowerRefPoint2 - upperRefPoint2))/...
-                    sqrt(sum((lowerRefPoint2 - upperRefPoint2).^2)); 
-                gaze = (gaze1 + gaze2) / 2;
+                    sum((lowerRefPoint2 - upperRefPoint2).^2); 
 
                 % Draw the vectors
-                xL1 = [upperRefPoint1(1), lowerRefPoint1(1)];
-                yL1 = [upperRefPoint1(2), lowerRefPoint1(2)];
-                xL2 = [upperRefPoint1(1), irisCenter1(1)];
-                yL2 = [upperRefPoint1(2), irisCenter1(2)];
-                xR1 = [upperRefPoint2(1), lowerRefPoint2(1)];
-                yR1 = [upperRefPoint2(2), lowerRefPoint2(2)];
-                xR2 = [upperRefPoint2(1), irisCenter2(1)];
-                yR2 = [upperRefPoint2(2), irisCenter2(2)];
-                
-                plot(xL1, yL1, 'color', 'red');
-                plot(xL2, yL2, 'color', 'blue');
-                plot(xR1, yR1, 'color', 'red');
-                plot(xR2, yR2, 'color', 'blue');
+                x1 = [upperRefPoint(1), lowerRefPoint(1)];
+                y1 = [upperRefPoint(2), lowerRefPoint(2)];
+                x2 = [upperRefPoint(1), irisCenter(1)];
+                y2 = [upperRefPoint(2), irisCenter(2)];
+                plot(x1, y1, 'color', 'red');
+                plot(x2, y2, 'color', 'blue');
 
             elseif movementAxis == 'x'
                 xRefPoints = refPointsBestCenters(:,1);
