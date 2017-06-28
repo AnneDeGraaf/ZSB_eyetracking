@@ -1,7 +1,7 @@
-% by Anne de Graaf
+% by Anne de Graaf and Dennis Holkema
 
 
-function gaze = gaze_tracking(movementAxis, gameover, webcamName)
+function command = gaze_tracking(movementAxis, gameover, webcamName, calibrationLeft, calibrationRight)
     tic;
     if gameover == 0
         %Take picture with camera
@@ -29,7 +29,7 @@ function gaze = gaze_tracking(movementAxis, gameover, webcamName)
         figure('name', 'checkcheck');
         imshow(BW3, 'InitialMagnification', 'fit');
 
-        seRectangle = strel('rectangle', [150 2]);
+        seRectangle = strel('rectangle', [120 15]);
         BWfinal = imdilate(BW3,seRectangle);
 
         %use BWfinal as clipping mask on image
@@ -93,13 +93,21 @@ function gaze = gaze_tracking(movementAxis, gameover, webcamName)
                 upperRefPoint2 = refPointsPair2(yUpperIndex2, :);
                 lowerRefPoint2 = refPointsPair2(yLowerIndex2, :);
                 
-                % calculate the gaze for each eye 
-                gaze1 = dot((irisCenter1 - upperRefPoint1), (lowerRefPoint1 - upperRefPoint1))/...
+                % calculate the iris location for each eye 
+                iris1 = dot((irisCenter1 - upperRefPoint1), (lowerRefPoint1 - upperRefPoint1))/...
                     sqrt(sum((lowerRefPoint1 - upperRefPoint1).^2)); 
-                gaze2 = dot((irisCenter2 - upperRefPoint2), (lowerRefPoint2 - upperRefPoint2))/...
+                iris2 = dot((irisCenter2 - upperRefPoint2), (lowerRefPoint2 - upperRefPoint2))/...
                     sqrt(sum((lowerRefPoint2 - upperRefPoint2).^2)); 
-                gaze = (gaze1 + gaze2) / 2;
-
+                
+                % translate iris locations into pong commands
+                if iris1 < (calibrationLeft - 1) && iris2 < (calibrationRight - 1)
+                    command = 'Up';
+                elseif iris1 > (calibrationLeft + 1) && iris2 > (calibrationRight + 1)
+                    command = 'Down';
+                else
+                    command = 'Neutral';
+                end
+                             
                 % Draw the vectors
                 xL1 = [upperRefPoint1(1), lowerRefPoint1(1)];
                 yL1 = [upperRefPoint1(2), lowerRefPoint1(2)];
@@ -116,16 +124,57 @@ function gaze = gaze_tracking(movementAxis, gameover, webcamName)
                 plot(xR2, yR2, 'color', 'blue');
 
             elseif movementAxis == 'x'
-                xRefPoints = refPointsBestCenters(:,1);
-                xLeftIndex = find(xRefPoints == min(xRefPoints));
-                xRightIndex = find(xRefPoints == max(xRefPoints));
-                leftRefPoint = refPointsBestCenters(xLeftIndex, :);
-                rightRefPoint = refPointsBestCenters(xRightIndex, :);
-                irisCenter = irisBestCenters(1,:);
-                gaze = dot((irisCenter - leftRefPoint), (rightRefPoint - leftRefPoint)/...
-                    sqrt(sum((rightRefPoint - leftRefPoint).^2)));
+                %sort the refPoints and irisses in x-direction to group the
+                %left and right eye.
+                refPointsBestCentersSorted = sortrows(refPointsBestCenters, 1);
+                irisBestCentersSorted = sortrows(irisBestCenters, 1);
+%                 xRefPoints = refPointsBestCenters(:,1);
+
+                refPointsPair1 = refPointsBestCentersSorted(1:2, :);
+                refPointsPair2 = refPointsBestCentersSorted(3:4, :);
+                
+                irisCenter1 = irisBestCentersSorted(1,:);
+                irisCenter2 = irisBestCentersSorted(2,:);
+                
+                % for each eye, find the left and right refPoint
+                leftRefPoint1 = refPointsPair1(1,:);
+                rightRefPoint1 = refPointsPair1(2,:);
+                                
+                leftRefPoint2 = refPointsPair2(1,:);
+                rightRefPoint2 = refPointsPair2(2,:);
+                
+                % calculate the iris location for each eye 
+                iris1 = dot((irisCenter1 - leftRefPoint1), (rightRefPoint1 - leftRefPoint1))/...
+                    sqrt(sum((rightRefPoint1 - leftRefPoint1).^2)); 
+                iris2 = dot((irisCenter2 - leftRefPoint2), (rightRefPoint2 - leftRefPoint2))/...
+                    sqrt(sum((rightRefPoint2 - leftRefPoint2).^2)); 
+                
+                % translate iris locations into pong commands
+                if iris1 < (calibrationLeft - 1) && iris2 < (calibrationRight - 1)
+                    command = 'Left';
+                elseif iris1 > (calibrationLeft + 1) && iris2 > (calibrationRight + 1)
+                    command = 'Right';
+                else
+                    command = 'Neutral';
+                end
+                             
+                % Draw the vectors
+                xL1 = [leftRefPoint1(1), rightRefPoint1(1)];
+                yL1 = [leftRefPoint1(2), rightRefPoint1(2)];
+                xL2 = [leftRefPoint1(1), irisCenter1(1)];
+                yL2 = [leftRefPoint1(2), irisCenter1(2)];
+                xR1 = [leftRefPoint2(1), rightRefPoint2(1)];
+                yR1 = [leftRefPoint2(2), rightRefPoint2(2)];
+                xR2 = [leftRefPoint2(1), irisCenter2(1)];
+                yR2 = [leftRefPoint2(2), irisCenter2(2)];
+                
+                plot(xL1, yL1, 'color', 'red');
+                plot(xL2, yL2, 'color', 'blue');
+                plot(xR1, yR1, 'color', 'red');
+                plot(xR2, yR2, 'color', 'blue');
+                
             else
-                gaze = sprintf('not a valid input for argument movementAxis');
+                command = sprintf('not a valid input for argument movementAxis');
             end
             
         else
@@ -133,7 +182,7 @@ function gaze = gaze_tracking(movementAxis, gameover, webcamName)
         end
 
     else
-        gaze = sprinf('game over');
+        command = sprinf('game over');
     end 
     time = toc
     end

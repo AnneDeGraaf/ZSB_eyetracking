@@ -2,9 +2,9 @@
 
 function [leftEye, rightEye] = eye_calibration(movementAxis, webcamName)
     if movementAxis == 'y'
-        sprintf('Please look at the middle of the left side of the screen and wait 5 seconds')  
+        sprintf('Please look at the middle of the left side of the screen and wait 5 seconds');  
     elseif movementAxis == 'x'
-        sprintf('Please look at the middle of the bottom of the screen and wait 5 seconds')        
+        sprintf('Please look at the middle of the bottom of the screen and wait 5 seconds');        
     else
         sprintf('not a valid input for argument movementAxis');
     end
@@ -35,7 +35,7 @@ function [leftEye, rightEye] = eye_calibration(movementAxis, webcamName)
 %     figure('name', 'checkcheck');
 %     imshow(BW3, 'InitialMagnification', 'fit');
 
-    seRectangle = strel('rectangle', [150 15]);
+    seRectangle = strel('rectangle', [150 2]);
     BWfinal = imdilate(BW3,seRectangle);
 
     %use BWfinal as clipping mask on image
@@ -99,42 +99,7 @@ function [leftEye, rightEye] = eye_calibration(movementAxis, webcamName)
             lowerRefPoint2 = refPointsPair2(yLowerIndex2, :);
 
             % calculate the gaze for each eye 
-            leftEye = dot((irisCenter1 - upperRefPoint1), (lowerRefPoint1 - upperRefPoint1))/...
+            gaze1 = dot((irisCenter1 - upperRefPoint1), (lowerRefPoint1 - upperRefPoint1))/...
                 sqrt(sum((lowerRefPoint1 - upperRefPoint1).^2)); 
-            rightEye = dot((irisCenter2 - upperRefPoint2), (lowerRefPoint2 - upperRefPoint2))/...
+            gaze2 = dot((irisCenter2 - upperRefPoint2), (lowerRefPoint2 - upperRefPoint2))/...
                 sqrt(sum((lowerRefPoint2 - upperRefPoint2).^2)); 
-            
-        elseif movementAxis == 'x'
-            %sort the refPoints and irisses in x-direction to group the
-            %left and right eye.
-            refPointsBestCentersSorted = sortrows(refPointsBestCenters, 1);
-            irisBestCentersSorted = sortrows(irisBestCenters, 1);
-%                 xRefPoints = refPointsBestCenters(:,1);
-
-            refPointsPair1 = refPointsBestCentersSorted(1:2, :);
-            refPointsPair2 = refPointsBestCentersSorted(2:3, :);
-
-            irisCenter1 = irisBestCentersSorted(1,:);
-            irisCenter2 = irisBestCentersSorted(2,:);
-
-            % for each eye, find the left and right refPoint
-            leftRefPoint1 = refPointsPair1(1,:);
-            rightRefPoint1 = refPointsPair1(2,:);
-
-            leftRefPoint2 = refPointsPair2(1,:);
-            rightRefPoint2 = refPointsPair2(2,:);
-
-            % calculate the iris location for each eye 
-            leftEye = dot((irisCenter1 - leftRefPoint1), (rightRefPoint1 - leftRefPoint1))/...
-                sqrt(sum((rightRefPoint1 - leftRefPoint1).^2)); 
-            rightEye = dot((irisCenter2 - leftRefPoint2), (rightRefPoint2 - leftRefPoint2))/...
-                sqrt(sum((rightRefPoint2 - leftRefPoint2).^2)); 
-            
-        else
-            sprintf('not a valid input for argument movementAxis');
-        end
-        
-    else
-        sprintf('calibration failed, please try again');
-    end
-end
