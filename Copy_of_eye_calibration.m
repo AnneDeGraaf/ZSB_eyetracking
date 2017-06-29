@@ -46,9 +46,9 @@ function [leftEye, rightEye] = eye_calibration(movementAxis, webcamName)
      hold on;
 
     % change variables here
-    irisRadiusRange = [35 45];
+    irisRadiusRange = [28 35];
     irisCircles = 2;
-    refPointsRadiusRange = [25 35];
+    refPointsRadiusRange = [25 28];
     refPointsCircles = 4;
 
     % find iris and reference point circles with radius in *RadiusRange
