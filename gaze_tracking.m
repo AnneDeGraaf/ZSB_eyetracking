@@ -100,9 +100,9 @@ function command = gaze_tracking(movementAxis, gameover, webcamName, calibration
                 
                 % calculate the iris location for each eye 
                 iris1 = dot((irisCenter1 - upperRefPoint1), (lowerRefPoint1 - upperRefPoint1))/...
-                    sqrt(sum((lowerRefPoint1 - upperRefPoint1).^2)); 
+                    sum((lowerRefPoint1 - upperRefPoint1).^2); 
                 iris2 = dot((irisCenter2 - upperRefPoint2), (lowerRefPoint2 - upperRefPoint2))/...
-                    sqrt(sum((lowerRefPoint2 - upperRefPoint2).^2)); 
+                    sum((lowerRefPoint2 - upperRefPoint2).^2); 
                 
                 % translate iris locations into pong commands
                 if iris1 < calibrationLeft && iris2 < calibrationRight
@@ -149,9 +149,9 @@ function command = gaze_tracking(movementAxis, gameover, webcamName, calibration
                 
                 % calculate the iris location for each eye 
                 iris1 = dot((irisCenter1 - leftRefPoint1), (rightRefPoint1 - leftRefPoint1))/...
-                    sqrt(sum((rightRefPoint1 - leftRefPoint1).^2)); 
+                    sum((rightRefPoint1 - leftRefPoint1).^2); 
                 iris2 = dot((irisCenter2 - leftRefPoint2), (rightRefPoint2 - leftRefPoint2))/...
-                    sqrt(sum((rightRefPoint2 - leftRefPoint2).^2)); 
+                    sum((rightRefPoint2 - leftRefPoint2).^2); 
                 
                 % translate iris locations into pong commands
                 if iris1 < calibrationLeft && iris2 < calibrationRight

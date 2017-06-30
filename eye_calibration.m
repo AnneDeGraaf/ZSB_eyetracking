@@ -105,9 +105,9 @@ function [leftEye, rightEye] = eye_calibration(movementAxis, webcamName)
 
             % calculate the gaze for each eye 
             leftEye = dot((irisCenter1 - upperRefPoint1), (lowerRefPoint1 - upperRefPoint1))/...
-                sqrt(sum((lowerRefPoint1 - upperRefPoint1).^2)); 
+                sum((lowerRefPoint1 - upperRefPoint1).^2); 
             rightEye = dot((irisCenter2 - upperRefPoint2), (lowerRefPoint2 - upperRefPoint2))/...
-                sqrt(sum((lowerRefPoint2 - upperRefPoint2).^2)); 
+                sum((lowerRefPoint2 - upperRefPoint2).^2); 
             
         elseif movementAxis == 'x'
             %sort the refPoints and irisses in x-direction to group the
@@ -131,9 +131,9 @@ function [leftEye, rightEye] = eye_calibration(movementAxis, webcamName)
 
             % calculate the iris location for each eye 
             leftEye = dot((irisCenter1 - leftRefPoint1), (rightRefPoint1 - leftRefPoint1))/...
-                sqrt(sum((rightRefPoint1 - leftRefPoint1).^2)); 
+                sum((rightRefPoint1 - leftRefPoint1).^2); 
             rightEye = dot((irisCenter2 - leftRefPoint2), (rightRefPoint2 - leftRefPoint2))/...
-                sqrt(sum((rightRefPoint2 - leftRefPoint2).^2)); 
+                sum((rightRefPoint2 - leftRefPoint2).^2); 
             
         else
             sprintf('not a valid input for argument movementAxis');
