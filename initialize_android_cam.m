@@ -2,8 +2,6 @@
 %using DroidcamX Pro-Software. Zoom has to be set to max-value, 
 %manually.
 
-function videoDevice = initialize_android_cam()
-    videoDevice = imaq.VideoDevice('winvideo', 2);
-    release(videoDevice);
-    videoDevice.ReturnedDataType = 'uint8';
+function cam = initialize_android_cam()
+    cam = webcam(2)
 end
