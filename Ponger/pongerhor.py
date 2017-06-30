@@ -49,8 +49,8 @@ def main():
 
         ###### VARIABLES
 
-        paddleleftxy = [200, 1055]
-        paddlerightxy = [200, 5]
+        paddleleftxy = [530, 1055]
+        paddlerightxy = [530, 5]
         scoreleft = 0
         scoreright = 0
         gameover = TRUE
@@ -72,8 +72,8 @@ def main():
         screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN, 0)
         pygame.display.set_caption('PONGER')
         screen.fill(BLACK)
-        paddle = pygame.image.load('paddle.bmp').convert()
-        paddleerase = pygame.image.load('paddleerase.bmp').convert()
+        paddle = pygame.image.load('paddlehor.bmp').convert()
+        paddleerase = pygame.image.load('paddleerasehor.bmp').convert()
         ball = pygame.image.load('ball.bmp').convert()
         ballerase = pygame.image.load('ballerase.bmp').convert()
         textleft = [1, 1, 2, 2]
@@ -137,19 +137,19 @@ def main():
 
             pressed_keys = pygame.key.get_pressed()
 
-            if pressed_keys[K_a]:
+            if pressed_keys[K_z]:
                 if paddleleftxy[0] > MINX:
                     paddleleftxy[0] = paddleleftxy[0] - PADDLESTEP
 
-            elif pressed_keys[K_z]:
+            elif pressed_keys[K_x]:
                 if paddleleftxy[0] < MAXX - 80:
                     paddleleftxy[0] = paddleleftxy[0] + PADDLESTEP
 
-            if pressed_keys[K_UP]:
+            if pressed_keys[K_LEFT]:
                 if paddlerightxy[0] > MINX:
                     paddlerightxy[0] = paddlerightxy[0] - PADDLESTEP
 
-            elif pressed_keys[K_DOWN]:
+            elif pressed_keys[K_RIGHT]:
                 if paddlerightxy[0] < MAXX - 80:
                     paddlerightxy[0] = paddlerightxy[0] + PADDLESTEP
 
@@ -158,13 +158,13 @@ def main():
                 ballservice = FALSE
                 if service == LEFT:
                     ## introduce random ball direction on serve
-                    balldy = random.randrange(2, 3)
                     balldx = random.randrange(-3, 3)
+                    balldy = random.randrange(-3, -2)
                     service = RIGHT
                 else:
                     ## introduce random ball direction on serve
-                    balldy = random.randrange(2, 3)
                     balldx = random.randrange(-3, 3)
+                    balldy = random.randrange(2, 3)
                     service == LEFT
 
             if pressed_keys[K_q]:
@@ -195,25 +195,25 @@ def main():
             #### if not serving just move the ball
             if ballservice is not TRUE:
                 ## have we hit the left paddle
-                if ballxy[0] < (paddleleftxy[0] + 20) and ballxy[1] > (paddleleftxy[1] - 18) and ballxy[1] < (
-                    paddleleftxy[1] + 98):
-                    balldx = -balldx
-                    if pressed_keys[K_a] or pressed_keys[K_z]:
-                        balldy = random.randrange(2, 4)
+                if ballxy[1] > (paddleleftxy[1] - 20) and ballxy[0] > (paddleleftxy[0] - 18) and ballxy[0] < (
+                    paddleleftxy[0] + 98):
+                    balldy = -balldy
+                    if pressed_keys[K_a] or pressed_keys[K_s]:
+                        balldx = random.randrange(-2, 4)
                     else:
-                        balldy = random.randrange(0, 3)
+                        balldx = random.randrange(-3, 3)
 
                 ## have we hit the right paddle
-                elif ballxy[0] > (paddlerightxy[0] - 20) and ballxy[1] > (paddlerightxy[1] - 18) and ballxy[1] <= (
-                    paddlerightxy[1] + 98):
+                elif ballxy[1] < (paddlerightxy[1] + 20) and ballxy[0] > (paddlerightxy[0] - 18) and ballxy[0] <= (
+                    paddlerightxy[0] + 98):
                     ### had to include ballcludge counter here to make sure ball did not bounce round paddle - Never seen
                     ### any behaviour like this on the left paddle so not added there
                     if ballcludge == 0:
-                        balldx = -balldx
-                        if pressed_keys[K_UP] or pressed_keys[K_DOWN]:
-                            balldy = random.randrange(2, 4)
+                        balldy = -balldy
+                        if pressed_keys[K_LEFT] or pressed_keys[K_RIGHT]:
+                            balldx = random.randrange(-2, 4)
                         else:
-                            balldy = random.randrange(0, 3)
+                            balldx = random.randrange(-3, 0)
                         ballcludge = 1
                     else:
                         ballcludge = ballcludge + 1
@@ -221,22 +221,22 @@ def main():
                             ballcludge = 0
 
                 ## have we hit the top of screen
-                elif ballxy[1] <= MINY:
-                    # 1#ballanglerad = -ballanglerad
-                    balldy = -balldy
-                ## have we hit the bottom of screen
-                elif ballxy[1] >= MAXY:
-                    # 1#ballanglerad = -ballanglerad
-                    balldy = -balldy
-                ## have we passed the left paddle
                 elif ballxy[0] <= MINX:
+                    # 1#ballanglerad = -ballanglerad
+                    balldx = -balldx
+                ## have we hit the bottom of screen
+                elif ballxy[0] >= MAXX:
+                    # 1#ballanglerad = -ballanglerad
+                    balldx = -balldx
+                ## have we passed the left paddle
+                elif ballxy[1] <= MINY:
                     ballservice = TRUE
                     service = RIGHT
                     scoreright = scoreright + 1
                     ## clear the score right text
                     pygame.draw.rect(screen, BLACK, textright)
                 ## have we passed the right paddle
-                elif ballxy[0] >= MAXX:
+                elif ballxy[1] >= MAXY:
                     ballservice = TRUE
                     service = LEFT
                     scoreleft = scoreleft + 1
@@ -250,11 +250,11 @@ def main():
             ####  if we are serving set up the ball by the paddle
             else:
                 if service == LEFT:
-                    ballxy[0] = paddleleftxy[0] + 25
-                    ballxy[1] = paddleleftxy[1] + 40
+                    ballxy[0] = paddleleftxy[0] + 40
+                    ballxy[1] = paddleleftxy[1] - 25
                 elif service == RIGHT:
-                    ballxy[0] = paddlerightxy[0] - 25
-                    ballxy[1] = paddlerightxy[1] + 40
+                    ballxy[0] = paddlerightxy[0] + 40
+                    ballxy[1] = paddlerightxy[1] + 25
 
             ###### RENDER SCREEN
 

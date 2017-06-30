@@ -50,8 +50,8 @@ def main():
         
         ###### VARIABLES
 
-        paddleleftxy = [200,1055]
-        paddlerightxy = [200,5]
+        paddleleftxy = [5,200]
+        paddlerightxy = [1055,200]
         scoreleft = 0
         scoreright = 0
         gameover = TRUE
@@ -143,12 +143,12 @@ def main():
             pressed_keys = pygame.key.get_pressed()
             
             if pressed_keys[K_a]:
-                if paddleleftxy[0] > MINX:
-                    paddleleftxy[0] = paddleleftxy[0] - PADDLESTEP
+                if paddleleftxy[1] > MINY:
+                    paddleleftxy[1] = paddleleftxy[1] - PADDLESTEP
 
             elif pressed_keys[K_z]:
-                if paddleleftxy[0] < MAXX - 80:
-                    paddleleftxy[0] = paddleleftxy[0] + PADDLESTEP
+                if paddleleftxy[1] < MAXY - 80:
+                    paddleleftxy[1] = paddleleftxy[1] + PADDLESTEP
 
                     
             if pressed_keys[K_UP]:
@@ -181,7 +181,7 @@ def main():
                 gamepaused = TRUE
                 font = pygame.font.SysFont("arial", 64)
                 paused_surface = font.render("PAUSED", True, BLUE)
-                paused_rect = screen.blit(paused_surface, (300,250))
+                paused_rect = screen.blit(paused_surface, (900,400))
                 pygame.display.update()
 
                 while gamepaused == TRUE:
