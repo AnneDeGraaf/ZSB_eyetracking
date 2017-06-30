@@ -12,12 +12,12 @@ function [leftEye, rightEye] = eye_calibration(movementAxis, webcamName)
     pause(5);
     %Take picture with camera
     %         videoDevice = imaq.VideoDevice('winvideo', 1);
-             rgbImage = step(webcamName);
-    %rgbImage = snapshot(webcamName);                                                                                     
+    %         rgbImage = step(webcamName);
+    rgbImage = snapshot(webcamName);                                                                                     
     grayImage = rgb2gray(rgbImage);
 
     %sobel edge detection
-    BW1 = edge(grayImage,'canny');
+    BW1 = edge(grayImage,'sobel');
 
     %thicken the edges and fill small gaps
     seLine90 = strel('line', 3, 120);
@@ -32,30 +32,35 @@ function [leftEye, rightEye] = eye_calibration(movementAxis, webcamName)
     BW2 = bwareaopen(BWnobord, 150);
     BW3 = bwareafilt(BW2,2);
  
-     figure('name', 'checkcheck');
-     imshow(BW3, 'InitialMagnification', 'fit');
+    figure('name', 'checkcheck');
+    imshow(BW3, 'InitialMagnification', 'fit');
 
-    seRectangle = strel('rectangle', [180 30]);
-    BWfinal = imdilate(BW3,seRectangle);
+    % making an enclosing rectangle around the eyes
+    [yPos, xPos] = find( BW3 ); 
+    xBorder = 15;
+    xMax = min( (max(xPos) + xBorder), size(BW3, 2) );
+    xMin = max( (min(xPos) - xBorder), 1 );
+    yBorder = round(0.6*(xMax - xMin));
+    yMax = min( (max(yPos) + yBorder), size(BW3, 1) );
+    yMin = max( (min(yPos) - yBorder), 1 );
 
-    %use BWfinal as clipping mask on image
-    clipImage = uint8(BWfinal) .* grayImage;
+    clipImage = grayImage(yMin:yMax, xMin:xMax);
 
-     figure('name', 'clipImage');
-     imshow(clipImage, 'InitialMagnification', 'fit');
-     hold on;
+    figure('name', 'clipImage');
+    imshow(clipImage, 'InitialMagnification', 'fit');
+    hold on;
 
     % change variables here
     irisRadiusRange = [28 35];
     irisCircles = 2;
-    refPointsRadiusRange = [25 28];
+    refPointsRadiusRange = [30 38];
     refPointsCircles = 4;
 
     % find iris and reference point circles with radius in *RadiusRange
     [irisCenters, irisRadii, irisMetric] = imfindcircles(clipImage, irisRadiusRange, ...
-    'Sensitivity', 0.98, 'Method', 'TwoStage', 'ObjectPolarity', 'dark');
+        'Sensitivity', 0.99, 'Method', 'TwoStage', 'ObjectPolarity', 'dark');
     [refPointsCenters, refPointsRadii, refPointsMetric] = imfindcircles(clipImage, refPointsRadiusRange, ...
-    'Sensitivity', 0.99, 'Method', 'TwoStage', 'ObjectPolarity', 'bright');
+        'Sensitivity', 0.99, 'Method', 'TwoStage', 'ObjectPolarity', 'bright');
 
     if size(irisCenters, 1) >= irisCircles && size(refPointsCenters, 1) >= refPointsCircles
     %     Retain the numCirclesDrawn strongest circles according to the metric values.
@@ -64,9 +69,9 @@ function [leftEye, rightEye] = eye_calibration(movementAxis, webcamName)
         refPointsBestCenters = refPointsCenters(1:refPointsCircles,:);
         refPointsBestRadii = refPointsRadii(1:refPointsCircles);
 
-         viscircles(irisBestCenters, irisBestRadii,'EdgeColor','b');
-         viscircles(refPointsBestCenters, refPointsBestRadii,'EdgeColor','r');
-         hold on;
+        viscircles(irisBestCenters, irisBestRadii,'EdgeColor','b');
+        viscircles(refPointsBestCenters, refPointsBestRadii,'EdgeColor','r');
+        hold on;
 
         %Find the position of the iris along axis movementAxis, 
         %relative to the two reference points
@@ -100,9 +105,9 @@ function [leftEye, rightEye] = eye_calibration(movementAxis, webcamName)
 
             % calculate the gaze for each eye 
             leftEye = dot((irisCenter1 - upperRefPoint1), (lowerRefPoint1 - upperRefPoint1))/...
-                sqrt(sum((lowerRefPoint1 - upperRefPoint1).^2)); 
+                sum((lowerRefPoint1 - upperRefPoint1).^2); 
             rightEye = dot((irisCenter2 - upperRefPoint2), (lowerRefPoint2 - upperRefPoint2))/...
-                sqrt(sum((lowerRefPoint2 - upperRefPoint2).^2)); 
+                sum((lowerRefPoint2 - upperRefPoint2).^2); 
             
         elseif movementAxis == 'x'
             %sort the refPoints and irisses in x-direction to group the
@@ -126,9 +131,9 @@ function [leftEye, rightEye] = eye_calibration(movementAxis, webcamName)
 
             % calculate the iris location for each eye 
             leftEye = dot((irisCenter1 - leftRefPoint1), (rightRefPoint1 - leftRefPoint1))/...
-                sqrt(sum((rightRefPoint1 - leftRefPoint1).^2)); 
+                sum((rightRefPoint1 - leftRefPoint1).^2); 
             rightEye = dot((irisCenter2 - leftRefPoint2), (rightRefPoint2 - leftRefPoint2))/...
-                sqrt(sum((rightRefPoint2 - leftRefPoint2).^2)); 
+                sum((rightRefPoint2 - leftRefPoint2).^2); 
             
         else
             sprintf('not a valid input for argument movementAxis');

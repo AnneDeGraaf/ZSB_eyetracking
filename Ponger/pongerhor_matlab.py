@@ -24,12 +24,12 @@ from pygame.locals import *
 import matlab.engine
 
 eng = matlab.engine.start_matlab()
-eng.cd(r'D:\000Minor\ZoekenSturenBewegen\eyetracking_code')
+eng.cd(r'C:\Users\denni\Documents\GitHub\ZSB_eyetracking')
 
-cam = eng.initialize_cam()
+videoDevice = eng.initialize_android_cam();
 
 print 'give left calibration value'
-calibrationLeft = float(raw_input()) 
+calibrationLeft = float(raw_input())
 print 'give right calibration value'
 calibrationRight = float(raw_input())
 
@@ -149,7 +149,7 @@ def main():
                     exit()
 
             pressed_keys = pygame.key.get_pressed()
-            matlabInput = eng.gaze_tracking('x', 0, cam, calibrationLeft, calibrationRight)
+            matlabInput = eng.Copy_of_gaze_tracking('x', 0, videoDevice, calibrationLeft, calibrationRight)
 
             if matlabInput == 'Left':
                 if paddleleftxy[0] > MINX:
