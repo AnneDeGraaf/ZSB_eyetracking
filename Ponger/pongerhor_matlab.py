@@ -33,6 +33,8 @@ calibrationLeft = float(raw_input())
 print 'give right calibration value'
 calibrationRight = float(raw_input())
 
+def 
+
 
 def main():
     run = 1
