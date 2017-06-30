@@ -17,7 +17,7 @@ function [leftEye, rightEye] = eye_calibration(movementAxis, webcamName)
     grayImage = rgb2gray(rgbImage);
 
     %sobel edge detection
-    BW1 = edge(grayImage,'canny');
+    BW1 = edge(grayImage,'sobel');
 
     %thicken the edges and fill small gaps
     seLine90 = strel('line', 3, 120);
@@ -30,16 +30,20 @@ function [leftEye, rightEye] = eye_calibration(movementAxis, webcamName)
 
     %take the two largest blobs
     BW2 = bwareaopen(BWnobord, 150);
-    BW3 = bwareafilt(BW2,2);
+    BW3 = bwareafilt(BW2,3);
  
      figure('name', 'checkcheck');
      imshow(BW3, 'InitialMagnification', 'fit');
 
-    seRectangle = strel('rectangle', [180 30]);
-    BWfinal = imdilate(BW3,seRectangle);
+    [yPos, xPos] = find( BW3 ); 
+    xBorder = 15;
+    xMax = min( (max(xPos) + xBorder), size(BW3, 2) );
+    xMin = max( (min(xPos) - xBorder), 1 );
+    yBorder = round(0.6*(xMax - xMin));
+    yMax = min( (max(yPos) + yBorder), size(BW3, 1) );
+    yMin = max( (min(yPos) - yBorder), 1 );
 
-    %use BWfinal as clipping mask on image
-    clipImage = uint8(BWfinal) .* grayImage;
+    clipImage = grayImage(yMin:yMax, xMin:xMax);
 
      figure('name', 'clipImage');
      imshow(clipImage, 'InitialMagnification', 'fit');
@@ -48,7 +52,7 @@ function [leftEye, rightEye] = eye_calibration(movementAxis, webcamName)
     % change variables here
     irisRadiusRange = [28 35];
     irisCircles = 2;
-    refPointsRadiusRange = [25 28];
+    refPointsRadiusRange = [30 38];
     refPointsCircles = 4;
 
     % find iris and reference point circles with radius in *RadiusRange
