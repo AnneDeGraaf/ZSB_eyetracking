@@ -1,3 +1,9 @@
+Code by:
+Dennis Holkema
+Anne de Graaf
 
-"api.py" - use as reference for the python matlab API.
-"initialize_cam.m" - use this to initialize the matlab webcam from python. reduces runtime significantly 
+Ponger game copied from:
+R.S. Brooks
+https://www.pygame.org/project/867/1508
+
+--This project is solely for educational purposes.

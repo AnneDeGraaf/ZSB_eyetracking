@@ -24,16 +24,21 @@ from pygame.locals import *
 import matlab.engine
 
 eng = matlab.engine.start_matlab()
-eng.cd(r'C:\Users\denni\Documents\GitHub\ZSB_eyetracking')
+eng.cd(r'D:\000Minor\ZoekenSturenBewegen\eyetracking_code')
 
-videoDevice = eng.initialize_android_cam();
+cam = eng.initialize_cam()
 
 print 'give left calibration value'
-calibrationLeft = float(raw_input())
+calibrationLeft = float(raw_input()) 
 print 'give right calibration value'
 calibrationRight = float(raw_input())
 
-def 
+q = Queue.LifoQueue()
+
+def matlabAPI():
+    while True: 
+        matlabOutput = eng.gaze_tracking('x', 0, cam, calibrationLeft, calibrationRight)
+        q.put(matlabOutput)
 
 
 def main():
@@ -124,7 +129,7 @@ def main():
                 run = 0
                 exit()
 
-            #clock.tick(20)
+            clock.tick(20)
 
         ###### main game loop
 
@@ -149,15 +154,17 @@ def main():
                     exit()
 
             pressed_keys = pygame.key.get_pressed()
-            matlabInput = eng.Copy_of_gaze_tracking('x', 0, videoDevice, calibrationLeft, calibrationRight)
+             
+            if q.qsize() > 0:
+                matlabInput = q.get_nowait()
 
-            if matlabInput == 'Left':
-                if paddleleftxy[0] > MINX:
-                    paddleleftxy[0] = paddleleftxy[0] - PADDLESTEP
+                if matlabInput == 'Up':
+                    if paddleleftxy[1] > MINY:
+                        paddleleftxy[1] = paddleleftxy[1] - (15*PADDLESTEP)
 
-            elif matlabInput == 'Right':
-                if paddleleftxy[0] < MAXX - 80:
-                    paddleleftxy[0] = paddleleftxy[0] + PADDLESTEP
+                elif matlabInput == 'Down':
+                    if paddleleftxy[1] < MAXY - 80:
+                        paddleleftxy[1] = paddleleftxy[1] + (15*PADDLESTEP)
 
             if pressed_keys[K_LEFT]:
                 if paddlerightxy[0] > MINX:
@@ -202,7 +209,7 @@ def main():
 
                     if pressed_keys[K_r]:
                         gamepaused = FALSE
-                    #clock.tick(20)
+                    clock.tick(20)
 
                 pygame.draw.rect(screen, BLACK, paused_rect)
 
@@ -212,10 +219,12 @@ def main():
                 if ballxy[1] > (paddleleftxy[1] - 20) and ballxy[0] > (paddleleftxy[0] - 18) and ballxy[0] < (
                     paddleleftxy[0] + 98):
                     balldy = -balldy
-                    if matlabInput == 'Left' or matlabInput == 'Right':
-                        balldx = random.randrange(-2, 4)
-                    else:
-                        balldx = random.randrange(-3, 3)
+                    if q.qsize() > 0:
+                        matlabInput = q.get_nowait()
+                        if matlabInput == 'Up' or matlabInput == 'Down':
+                            balldy = random.randrange(2,4)
+                        else:
+                            balldy = random.randrange(0,3)
 
                 ## have we hit the right paddle
                 elif ballxy[1] < (paddlerightxy[1] + 20) and ballxy[0] > (paddlerightxy[0] - 18) and ballxy[0] <= (
@@ -277,8 +286,17 @@ def main():
             screen.blit(ball, ballxy)
             pygame.display.update()
 
-            #clock.tick(100)
+            clock.tick(100)
 
 
 if __name__ == '__main__':
-    main()
+    #main()
+    try:
+        thread.start_new_thread( matlabAPI, () )
+        thread.start_new_thread( main, () )
+
+    except:
+        print "Error: unable to start thread"
+
+    while 1:
+        pass

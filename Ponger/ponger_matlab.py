@@ -159,18 +159,17 @@ def main():
                     exit()
                     
             pressed_keys = pygame.key.get_pressed()
-            #matlabInput = eng.gaze_tracking('y', 0, cam, calibrationLeft, calibrationRight)
-
+            
             if q.qsize() > 0:
                 matlabInput = q.get_nowait()
 
                 if matlabInput == 'Up':
                     if paddleleftxy[1] > MINY:
-                        paddleleftxy[1] = paddleleftxy[1] - PADDLESTEP
+                        paddleleftxy[1] = paddleleftxy[1] - (15*PADDLESTEP)
 
                 elif matlabInput == 'Down':
                     if paddleleftxy[1] < MAXY - 80:
-                        paddleleftxy[1] = paddleleftxy[1] + PADDLESTEP
+                        paddleleftxy[1] = paddleleftxy[1] + (15*PADDLESTEP)
 
                     
             if pressed_keys[K_UP]:
